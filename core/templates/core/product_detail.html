@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow-md overflow-hidden p-6 lg:p-10">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <div class="lg:w-1/2 flex-shrink-0">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-auto object-cover rounded-lg shadow-lg">
+            {% else %}
+            <div class="w-full h-auto bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-sm p-4" style="height: 400px;">
+                No image available
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="lg:w-1/2 flex-grow">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ product.title }}</h1>
+
+            {% if product.is_sold %}
+                <span class="inline-block bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-4">Sold</span>
+            {% else %}
+                <p class="text-4xl font-extrabold text-blue-600 mb-4">${{ product.price|floatformat:2 }}</p>
+            {% endif %}
+
+            <div class="flex items-center space-x-2 text-yellow-500 mb-4">
+                {% if average_rating %}
+                    <span class="text-xl font-bold">{{ average_rating|floatformat:1 }}</span>
+                    {% for i in "12345"|make_list %}
+                        {% if forloop.counter <= average_rating|default:0 %}
+                        <i class="fas fa-star"></i>
+                        {% else %}
+                        <i class="far fa-star"></i>
+                        {% endif %}
+                    {% endfor %}
+                    <span class="text-sm text-gray-600">({{ review_count }} review{{ review_count|pluralize }})</span>
+                {% else %}
+                    <span class="text-gray-500 text-sm">No reviews yet.</span>
+                {% endif %}
+            </div>
+
+            <p class="text-gray-700 leading-relaxed mb-6">{{ product.description|linebreaksbr }}</p>
+
+            <div class="bg-gray-100 p-4 rounded-lg mb-6">
+                <p class="text-sm text-gray-600">
+                    <span class="font-semibold">Posted by:</span>
+                    <a href="{% url 'profile' username=product.seller.username %}" class="text-blue-500 hover:underline">{{ product.seller.username }}</a> on {{ product.posted_at|date:"F d, Y" }}
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4">
+                {% if not product.is_sold %}
+                    {% if request.user.is_authenticated and request.user != product.seller %}
+                    <a href="{% url 'message_send_to_product_seller' product_pk=product.pk %}" class="w-full sm:w-auto px-6 py-3 bg-blue-600 text-white rounded-md font-semibold text-center hover:bg-blue-700 transition duration-200">
+                        Message Seller
+                    </a>
+                    {% endif %}
+                {% endif %}
+
+                {% if request.user == product.seller %}
+                    <a href="{% url 'product_edit' pk=product.pk %}" class="w-full sm:w-auto px-6 py-3 bg-yellow-500 text-white rounded-md font-semibold text-center hover:bg-yellow-600 transition duration-200">
+                        Edit Product
+                    </a>
+                    {% if not product.is_sold %}
+                    <form action="{% url 'mark_as_sold' pk=product.pk %}" method="post" onsubmit="return confirm('Are you sure you want to mark this product as sold?');" class="w-full sm:w-auto">
+                        {% csrf_token %}
+                        <button type="submit" class="w-full px-6 py-3 bg-green-500 text-white rounded-md font-semibold text-center hover:bg-green-600 transition duration-200">
+                            Mark as Sold
+                        </button>
+                    </form>
+                    {% endif %}
+                    <a href="{% url 'product_delete' pk=product.pk %}" class="w-full sm:w-auto px-6 py-3 bg-red-500 text-white rounded-md font-semibold text-center hover:bg-red-600 transition duration-200">
+                        Delete Product
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-8 bg-white rounded-lg shadow-md p-6 lg:p-10">
+    <h3 class="text-2xl font-bold text-gray-900 mb-4">Customer Reviews</h3>
+
+    {% if not product.is_sold and not has_reviewed %}
+    <p class="text-gray-600 mb-4">You can only add a review once this product has been marked as sold.</p>
+    {% endif %}
+
+    {% if product.is_sold and request.user.is_authenticated and not has_reviewed and request.user != product.seller %}
+    <div class="mb-6">
+        <h4 class="text-xl font-semibold mb-2">Leave a Review</h4>
+        <form method="post" action="{% url 'add_review' pk=product.pk %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="rating" class="block text-sm font-medium text-gray-700">Your Rating:</label>
+                <div class="flex space-x-1 mt-1">
+                    {% for i in "12345"|make_list %}
+                        <label class="cursor-pointer text-gray-400 hover:text-yellow-500 transition-colors">
+                            <input type="radio" name="rating" value="{{ forloop.counter }}" class="hidden peer" required>
+                            <i class="far fa-star text-2xl peer-checked:text-yellow-500"></i>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div>
+                <label for="comment" class="block text-sm font-medium text-gray-700">Your Comment (optional):</label>
+                <textarea id="comment" name="comment" rows="4" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"></textarea>
+            </div>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">Submit Review</button>
+        </form>
+    </div>
+    {% endif %}
+
+    {% if reviews %}
+    <div class="space-y-6">
+        {% for review in reviews %}
+        <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div class="flex justify-between items-start">
+                <div>
+                    <span class="font-semibold text-gray-800">{{ review.author.username }}</span>
+                    <div class="flex items-center space-x-1 mt-1">
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= review.rating %}
+                            <i class="fas fa-star text-yellow-500"></i>
+                            {% else %}
+                            <i class="far fa-star text-gray-400"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <span class="text-sm text-gray-500">{{ review.created_at|date:"F d, Y" }}</span>
+            </div>
+            {% if review.comment %}
+            <p class="text-gray-700 mt-2">{{ review.comment }}</p>
+            {% endif %}
+
+            {% if request.user == review.author %}
+            <div class="mt-4 text-right">
+                <form action="{% url 'delete_review' pk=review.pk %}" method="post" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-600">There are no reviews for this product yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

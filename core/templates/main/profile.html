@@ -1,0 +1,77 @@
+{% extends 'main/../base.html' %}
+{% block title %}User Profile Dashboard{% endblock %}
+
+{% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to top, #89bef0, #ffffff 50%);
+    }
+</style>
+
+<div class="max-w-7xl mx-auto p-6 md:p-10">
+
+    <h1 class="text-3xl md:text-4xl font-bold mb-6 mt-10">My Profile</h1>
+    <div class="bg-white p-6 md:p-10 rounded-3xl shadow-lg mb-8">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center space-y-6 lg:space-y-0 lg:space-x-8">
+            <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
+                {% if profile_user.profile_pic %}
+                    <img src="{{ profile_user.profile_pic.url }}" alt="{{ profile_user.username }}'s profile picture" class="w-full h-full object-cover">
+                {% else %}
+                    <span class="text-4xl font-semibold text-gray-500">P</span>
+                {% endif %}
+            </div>
+
+            <div class="flex-grow">
+                <h2 class="text-2xl font-bold">{{ profile_user.username }}</h2>
+                <p class="text-sm text-gray-500">Member since {{ profile_user.date_joined|date:"F d, Y" }}</p>
+                <p class="text-gray-600 mt-2">{{ profile_user.email }}</p>
+                <p class="text-gray-600 mt-2">{{ profile_user.product_set.count }} Total Products</p>
+                {% if request.user == profile_user %}
+                    <a href="{% url 'logout' %}" class="inline-block px-4 py-2 mt-4 text-sm font-semibold text-white bg-red-500 rounded-lg hover:bg-red-600 transition duration-200">
+                        Log out
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12 text-center">
+        <h2 class="text-3xl font-bold text-gray-800">Your Products</h2>
+        <p class="mt-2 text-gray-600">Listings you have for sale and those that have been sold.</p>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% if active_products or sold_products %}
+            {% for product in active_products %}
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <a href="{% url 'product_detail' product.pk %}" class="block">
+                        <h3 class="text-xl font-semibold">{{ product.title }}</h3>
+                        <p class="text-gray-500">{{ product.category }}</p>
+                        <p class="mt-2 text-gray-600">₱{{ product.price }}</p>
+                    </a>
+                </div>
+            {% endfor %}
+
+            {% for product in sold_products %}
+                <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-200">
+                    <a href="{% url 'product_detail' product.pk %}" class="block">
+                        <h3 class="text-xl font-semibold">{{ product.title }}</h3>
+                        <p class="text-gray-500">{{ product.category }}</p>
+                        <p class="mt-2 text-2xl font-bold text-red-600">Sold</p>
+
+                        {% if request.user.is_authenticated and request.user != profile_user %}
+                             <a href="{% url 'product_detail' product.pk %}" class="mt-2 text-blue-500 hover:underline block">
+                                View and Review
+                             </a>
+                        {% endif %}
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center text-gray-500 col-span-full">No products found.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
