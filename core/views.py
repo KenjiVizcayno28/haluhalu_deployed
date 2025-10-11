@@ -26,7 +26,7 @@ def signup_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registration completed.')
-            return redirect('base')
+            return redirect('login')
         else:
             return render(
                 request,
