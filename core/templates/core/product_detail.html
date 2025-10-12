@@ -46,7 +46,18 @@
             <div class="bg-gray-100 p-4 rounded-lg mb-6">
                 <p class="text-sm text-gray-600">
                     <span class="font-semibold">Posted by:</span>
-                    <a href="{% url 'profile' username=product.seller.username %}" class="text-blue-500 hover:underline">{{ product.seller.username }}</a> on {{ product.posted_at|date:"F d, Y" }}
+
+                    {% if user.is_authenticated %}
+                        {# If the user is logged in, show a clickable link to the profile #}
+                        <a href="{% url 'profile' username=product.seller.username %}" class="text-blue-500 hover:underline">
+                            {{ product.seller.username }}
+                        </a>
+                    {% else %}
+                        {# If the user is not logged in, just show the username as text #}
+                        {{ product.seller.username }}
+                    {% endif %}
+
+                    on {{ product.posted_at|date:"F d, Y" }}
                 </p>
             </div>
 
