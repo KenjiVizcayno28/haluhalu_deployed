@@ -479,3 +479,26 @@ def mark_as_sold(request, pk):
 @login_required
 def my_profile(request):
     return redirect('profile', username=request.user.username)
+
+@login_required
+def update_profile_pic(request):
+    if request.method == 'POST' and request.FILES.get('profile_pic'):
+        request.user.profile_pic = request.FILES['profile_pic']
+        request.user.save()
+    return redirect('profile', username=request.user.username)
+
+
+def search_products(request):
+    query = request.GET.get('q', '')
+    if query:
+        products = Product.objects.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query)
+        ).filter(is_public=True, is_sold=False)
+    else:
+        products = Product.objects.none()
+
+    return render(request, 'main/search_results.html', {
+        'products': products,
+        'query': query
+    })

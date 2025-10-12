@@ -8,7 +8,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class CustomUser(AbstractUser):
-    profile_pic = models.ImageField(upload_to='profile_pics', null=True, blank=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 
     def __str__(self):
         return self.username

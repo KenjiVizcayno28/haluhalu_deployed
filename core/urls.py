@@ -54,4 +54,8 @@ urlpatterns = [
 
     # NEW URL to handle marking a product as sold
     path('products/<int:pk>/sold/', views.mark_as_sold, name='mark_as_sold'),
+    path('update-profile-pic/', views.update_profile_pic, name='update_profile_pic'),
+    path('search/', views.search_products, name='search'),
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %}
 
 {% block content %}
@@ -8,32 +7,32 @@
     <div class="space-y-4">
         {% for message in conversations %}
             <div class="block bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-200 relative">
-                <a href="{% url 'message_detail' message.conversation_starter.pk|default:message.pk %}" class="block">
-                    <div class="flex justify-between items-center mb-2">
+                <div class="flex justify-between items-center mb-2">
                     <span class="font-semibold text-gray-800">
                         {% if request.user == message.sender %}
-                            <a href="{% url 'profile' username=message.receiver.username %}" class="text-blue-500 hover:underline">To: {{ message.receiver.username }}</a>
+                            <span class="text-gray-800">To: {{ message.receiver.username }}</span>
                         {% else %}
-                            <a href="{% url 'profile' username=message.sender.username %}" class="text-blue-500 hover:underline">From: {{ message.sender.username }}</a>
+                            <span class="text-gray-800">From: {{ message.sender.username }}</span>
                         {% endif %}
                     </span>
 
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500">{{ message.sent_at|date:"M d, Y H:i" }}</span>
-                            <form action="{% url 'delete_conversation' message.conversation_starter.pk|default:message.pk %}" method="post" onsubmit="return confirm('Are you sure you want to delete this conversation? This will only remove it from your view.');">
-                                {% csrf_token %}
-                                <button type="submit" class="text-red-500 hover:text-red-700 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500" aria-label="Delete conversation">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-gray-500">{{ message.sent_at|date:"M d, Y H:i" }}</span>
+                        <form action="{% url 'delete_conversation' message.conversation_starter.pk|default:message.pk %}" method="post" onsubmit="return confirm('Are you sure you want to delete this conversation? This will only remove it from your view.');">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-500 hover:text-red-700 p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 z-10" aria-label="Delete conversation">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
                     </div>
-                    <h3 class="text-lg font-medium text-gray-900">{{ message.subject }}</h3>
-                    <p class="text-gray-600 text-sm line-clamp-2">{{ message.body }}</p>
-                    {% if request.user == message.receiver and not message.is_read %}
-                        <span class="text-blue-600 text-xs font-semibold mt-1 inline-block">New Activity</span>
-                    {% endif %}
-                </a>
+                </div>
+
+                <a href="{% url 'message_detail' message.conversation_starter.pk|default:message.pk %}" class="absolute inset-0"></a>
+                <h3 class="text-lg font-medium text-gray-900">{{ message.subject }}</h3>
+                <p class="text-gray-600 text-sm line-clamp-2">{{ message.body }}</p>
+                {% if request.user == message.receiver and not message.is_read %}
+                    <span class="text-blue-600 text-xs font-semibold mt-1 inline-block">New Activity</span>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
@@ -49,9 +48,7 @@
             {% endif %}
         </div>
     {% endif %}
-
 {% else %}
     <p class="text-gray-600">Your inbox is empty. No conversations yet.</p>
 {% endif %}
-
 {% endblock %}
