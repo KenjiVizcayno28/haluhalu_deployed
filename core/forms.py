@@ -36,9 +36,9 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['title', 'description', 'price', 'image']
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter product title'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Describe your product...'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}),
+            'title': forms.TextInput(attrs={'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200', 'placeholder': 'Title'}),
+            'description': forms.Textarea(attrs={'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200', 'rows': 5, 'placeholder': 'Describe your product...'}),
+            'price': forms.NumberInput(attrs={'class': 'w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200', 'placeholder': '0.00'}),
         }
 
 class MessageForm(forms.ModelForm):
