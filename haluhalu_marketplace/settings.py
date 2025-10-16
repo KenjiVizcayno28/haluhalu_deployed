@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-vm*v(0hc7$y8&y0++0fj0=k1h%h*5u64sa%e1!#dr(a#7t7*zn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'storages',
 
 ]
 
@@ -140,3 +141,13 @@ AUTH_USER_MODEL = 'core.CustomUser'
 # This will make sure that after a successful login, users are redirected to the product list.
 LOGIN_REDIRECT_URL = '/products/' # Redirect to the product list page after login
 LOGOUT_REDIRECT_URL = '/login/' # Redirect to the login page after logout
+
+AWS_ACCESS_KEY_ID = 'AKIASUIE44ZR4YQWLGO4'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'haluhalu'
+AWS_S3_SIGNATURE_NAME = 's3v4'
+AWS_S3_REGION_NAME = 'ap-southeast-2'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

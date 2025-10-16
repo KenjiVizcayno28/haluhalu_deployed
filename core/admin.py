@@ -37,7 +37,7 @@ admin_site = MyAdminSite(name="myadmin")
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('title', 'is_public', 'is_sold', 'seller', 'posted_at')
     list_filter = ('is_public', 'is_sold', 'posted_at', 'seller')
-    search_fields = ('title', 'description', 'seller__username')
+    search_fields = ('title', 'description')
     ordering = ('-posted_at',)
     list_display_links = ('title',)
 

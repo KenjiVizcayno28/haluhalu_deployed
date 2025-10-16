@@ -11,6 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.db.models import Max, F, Subquery, OuterRef
 from django.http import HttpResponseForbidden
+from urllib3 import request
+
 # Combined imports to avoid redundancy
 from .models import CustomUser, Product, Message, Review
 from .forms import CustomUserCreationForm, ProductForm, MessageForm
@@ -162,7 +164,7 @@ class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         product = self.get_object()
-        return self.request.user == product.seller
+        return self.request.user == product.seller or CustomUser.is_staff
 
     def form_valid(self, form):
         messages.success(self.request, "Product deleted successfully!")
