@@ -142,7 +142,7 @@ AUTH_USER_MODEL = 'core.CustomUser'
 LOGIN_REDIRECT_URL = '/products/' # Redirect to the product list page after login
 LOGOUT_REDIRECT_URL = '/login/' # Redirect to the login page after logout
 
-AWS_ACCESS_KEY_ID = 'AKIASUIE44ZR4YQWLGO4'
+
 AWS_STORAGE_BUCKET_NAME = 'haluhalu'
 AWS_S3_SIGNATURE_NAME = 's3v4'
 AWS_S3_REGION_NAME = 'ap-southeast-2'
