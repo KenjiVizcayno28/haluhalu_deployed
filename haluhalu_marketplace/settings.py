@@ -143,7 +143,6 @@ LOGIN_REDIRECT_URL = '/products/' # Redirect to the product list page after logi
 LOGOUT_REDIRECT_URL = '/login/' # Redirect to the login page after logout
 
 AWS_ACCESS_KEY_ID = 'AKIASUIE44ZR4YQWLGO4'
-AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'haluhalu'
 AWS_S3_SIGNATURE_NAME = 's3v4'
 AWS_S3_REGION_NAME = 'ap-southeast-2'
